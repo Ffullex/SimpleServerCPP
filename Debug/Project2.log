@@ -1,0 +1,33 @@
+﻿  ServerStart.cpp
+C:\Томановский Ярослав\Процкаем\CPPServer\CppChat\Project2\ServerStart.cpp(116,29): warning C4138: '*/' found outside of comment
+C:\Users\User\Downloads\vcpkg-master\installed\x86-windows\include\uwebsockets\WebSocketProtocol.h(328,68): warning C4244: 'argument': conversion from 'T' to 'size_t', possible loss of data
+          with
+          [
+              T=uint64_t
+          ]
+C:\Users\User\Downloads\vcpkg-master\installed\x86-windows\include\uwebsockets\WebSocketProtocol.h(435): message : see reference to function template instantiation 'bool uWS::WebSocketProtocol<true,uWS::WebSocketContext<false,true>>::consumeMessage<14,uint64_t>(T,char *&,unsigned int &,uWS::WebSocketState<true> *,void *)' being compiled
+          with
+          [
+              T=uint64_t
+          ]
+C:\Users\User\Downloads\vcpkg-master\installed\x86-windows\include\uwebsockets\WebSocketProtocol.h(435): message : see reference to function template instantiation 'bool uWS::WebSocketProtocol<true,uWS::WebSocketContext<false,true>>::consumeMessage<14,uint64_t>(T,char *&,unsigned int &,uWS::WebSocketState<true> *,void *)' being compiled
+          with
+          [
+              T=uint64_t
+          ]
+C:\Users\User\Downloads\vcpkg-master\installed\x86-windows\include\uwebsockets\WebSocketProtocol.h(406): message : while compiling class template member function 'void uWS::WebSocketProtocol<true,uWS::WebSocketContext<false,true>>::consume(char *,unsigned int,uWS::WebSocketState<true> *,void *)'
+C:\Users\User\Downloads\vcpkg-master\installed\x86-windows\include\uwebsockets\WebSocketContext.h(285): message : see reference to function template instantiation 'void uWS::WebSocketProtocol<true,uWS::WebSocketContext<false,true>>::consume(char *,unsigned int,uWS::WebSocketState<true> *,void *)' being compiled
+C:\Users\User\Downloads\vcpkg-master\installed\x86-windows\include\uwebsockets\WebSocketContext.h(285): message : see reference to class template instantiation 'uWS::WebSocketProtocol<true,uWS::WebSocketContext<false,true>>' being compiled
+C:\Users\User\Downloads\vcpkg-master\installed\x86-windows\include\uwebsockets\WebSocketContext.h(234): message : while compiling class template member function 'uWS::WebSocketContext<false,true> *uWS::WebSocketContext<false,true>::init(void)'
+C:\Users\User\Downloads\vcpkg-master\installed\x86-windows\include\uwebsockets\WebSocketContext.h(389): message : see reference to function template instantiation 'uWS::WebSocketContext<false,true> *uWS::WebSocketContext<false,true>::init(void)' being compiled
+C:\Users\User\Downloads\vcpkg-master\installed\x86-windows\include\uwebsockets\App.h(93): message : see reference to class template instantiation 'uWS::WebSocketContext<false,true>' being compiled
+C:\Users\User\Downloads\vcpkg-master\installed\x86-windows\include\uwebsockets\App.h(87): message : while compiling class template member function 'uWS::TemplatedApp<false>::~TemplatedApp(void)'
+C:\Томановский Ярослав\Процкаем\CPPServer\CppChat\Project2\ServerStart.cpp(127): message : see reference to function template instantiation 'uWS::TemplatedApp<false>::~TemplatedApp(void)' being compiled
+C:\Томановский Ярослав\Процкаем\CPPServer\CppChat\Project2\ServerStart.cpp(70): message : see reference to class template instantiation 'uWS::TemplatedApp<false>' being compiled
+C:\Users\User\Downloads\vcpkg-master\installed\x86-windows\include\uwebsockets\WebSocketProtocol.h(332,64): warning C4244: 'argument': conversion from 'T' to 'size_t', possible loss of data
+          with
+          [
+              T=uint64_t
+          ]
+     Creating library C:\Томановский Ярослав\Процкаем\CPPServer\CppChat\Project2\Debug\Project2.lib and object C:\Томановский Ярослав\Процкаем\CPPServer\CppChat\Project2\Debug\Project2.exp
+  Project2.vcxproj -> C:\Томановский Ярослав\Процкаем\CPPServer\CppChat\Project2\Debug\Project2.exe

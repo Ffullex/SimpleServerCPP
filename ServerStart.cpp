@@ -15,9 +15,23 @@ using namespace std;
 // ONLINE::1::Mike
 // OFFLINE::1::Mike
 
+// 4. Общий чат.
+// TOALL::Привет всем!
+
+const string BROAD_CHANNEL = "broadcast";
 
 const string SET_NAME = "SET_NAME::";
 const string DIRECT = "DIRECT::";
+const string TOALL = "TOALL::";
+
+bool isToAllCommand(string_view message) {
+    return message.find(TOALL) == 0;
+}
+
+string parseToAllText(string_view message) {
+    return string(message.substr(TOALL.length()));
+}
+
 // Возвращает true если это команда установления имени
 bool isSetNameCommand(string_view message) {
     // "SET_NAME:: Mike"->find("SET_NAME::") == 0;
@@ -56,6 +70,16 @@ bool isDirectCommand(string_view message) {
     // "SET_NAME:: Mike"->find("Mike") == 10;
     return message.find(DIRECT) == 0;
 }
+
+// ONLINE::1::Mike
+// OFFLINE::1::Mike
+string makeOnline(int user_id, string user_name) {
+    return "ONLINE::" + to_string(user_id) + "::" + user_name;
+}
+
+string makeOffline(int user_id, string user_name) {
+    return "OFFLINE::" + to_string(user_id) + "::" + user_name;
+}
     
 int main() {
      // Структура данных, которая хранит всю инормацию об одном пользователе чата
@@ -65,6 +89,7 @@ int main() {
     };
 
     int last_user_id = 10;
+    map<int, string> usersOnline; // имена и id пользователей, которые онлайн
 
      // Создаём новый сервер
     uWS::App() // Создаём новый сервер
@@ -79,20 +104,20 @@ int main() {
 
             /* Handlers (Обработчики)*/
             .upgrade = nullptr,
-            .open = [&last_user_id](auto* connection) {
+            .open = [&last_user_id, &usersOnline](auto* connection) {
                 // При открытии соединения
                 PerSocketData* userData = (PerSocketData*)connection->getUserData();
                 // Назначить уникальный номер
                 userData->user_id = last_user_id++;
                 // Добавить пустое имя
                 userData->name = "UNNAMED";
-
-                connection->subscribe("broadcast"); // Подписываем на канал "Широкое вещание"(имя любое)
+                usersOnline[userData->user_id] = userData->name;
+                connection->subscribe(BROAD_CHANNEL); // Подписываем на канал "Широкое вещание"(имя любое)
                 connection->subscribe("user#" + to_string(userData->user_id));
                 /* Open event here, you may access ws->getUserData() which points to a PerSocketData struct */
                 // cout << "New connection created \n";
             },
-            .message = [](auto* connection, string_view message, uWS::OpCode opCode) {
+            .message = [&usersOnline](auto* connection, string_view message, uWS::OpCode opCode) {
                 cout << "New message received" << message << "\n";
                 PerSocketData* userData = (PerSocketData*)connection->getUserData();
                 // 1. Сообщает своё имя пользователь
@@ -100,6 +125,20 @@ int main() {
                     cout << "User set their name \n";
                     userData->name = parseName(message);
                     // Нужно записать имя
+                    usersOnline[userData->user_id] = userData->name;
+                    // Сообщить всем о подключении пользователя
+                    connection->publish(BROAD_CHANNEL, makeOnline(userData->user_id, userData->name));
+                    // Сообщить пользователю обо всех подключениях
+                    for (auto entry : usersOnline) {
+                        //entry.first = id userData->user_id
+                        //entry.second == name userData->name
+                        connection->send(makeOnline(entry.first, entry.second), uWS::OpCode::TEXT);
+                        //connection->publish(
+                        //    "user#" + to_string(userData->user_id), // Равноценно connection->send(makeOnline(userData->user_id, userData->name));
+                        //    makeOnline(userData->user_id, userData->name)
+                        //);
+                        
+                    }
                 }
                 // 2. Может кому-то написать
                 if (isDirectCommand(message)) {
@@ -107,17 +146,24 @@ int main() {
                     // Нужно переправить сообщение получателю
                     string id = parseReceiverId(message);
                     string text = parseDirectMessage(message);
-                    connection->publish("user#" + id, text); // Отправляем получателю текст сообщения
+                    connection->publish("user#" + id, "DIRECT::" + userData->name + ":: " + text); // Отправляем получателю текст сообщения
                     // В сложных серваках записывается в БД
                 }
-                // При получении сообщения от пользователя
-                // ws->send(message, opCode, true);
+                // 3. Сообщение в общий чат
+                if (isToAllCommand(message)) {
+                    string text = parseToAllText(message);
+                    connection->publish(BROAD_CHANNEL, "TOALL::" + userData->name + "::" + text); // Отправляем текст всем
+                }
             },
-            .close = [](auto*/*ws*/, int /*code*/, std::string_view /*message*/) {
+            .close = [&usersOnline](auto* connection, int /*code*/, std::string_view /*message*/) {
+                PerSocketData* userData = (PerSocketData*)connection->getUserData();
                 cout << "Connection closed";
                 // Забыть пользователя
+                connection->publish(BROAD_CHANNEL, makeOffline(userData->user_id, userData->name));
                 // При отключении пользователя от сервера
-                /* You may access ws->getUserData() here */
+                // Сообщить всем об отключении пользователя
+
+                usersOnline.erase(userData->user_id); // делит с карты
             }
                 // Запуск сервера
             }).listen(9001, [](auto* listen_socket) {
